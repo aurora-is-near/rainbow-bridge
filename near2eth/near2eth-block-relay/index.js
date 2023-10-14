@@ -62,9 +62,11 @@ class Near2EthRelay {
         // Get most recent block from Near blockchain.
         const status = await this.near.connection.provider.status()
         // Get the block two blocks before that, to make sure it is final.
+        const blockId = status.sync_info.latest_block_height - 2;
         const headBlock = await this.near.connection.provider.block({
-          blockId: status.sync_info.latest_block_height
+          blockId: blockId
         })
+        console.log(`Initializing with head block at: ${blockId}`);
         const lastFinalBlockHash = headBlock.header.last_final_block
         // The finalized block is not immediately available so we wait for it to become available.
         let lightClientBlock = null
@@ -88,6 +90,7 @@ class Near2EthRelay {
         }
         console.log('Initializing with validators')
         console.log(`${JSON.stringify(currentValidators)}`)
+        console.log(`Num validators: ${currentValidators.length}`);
         const borshInitialValidators = borshifyInitialValidators(
           currentValidators
         )
@@ -99,7 +102,7 @@ class Near2EthRelay {
               .initWithValidators(borshInitialValidators)
               .send({
                 from: this.ethMasterAccount,
-                gas: 4000000,
+                gas: 6000000,
                 handleRevert: true,
                 gasPrice
               })
@@ -120,12 +123,13 @@ class Near2EthRelay {
 
         console.log('Initializing with block')
         console.log(`${JSON.stringify(lightClientBlock)}`)
+        console.log(`Num validators: ${lightClientBlock.next_bps.length}`);
         const borshBlock = borshify(lightClientBlock)
         for (let i = 0; i < 10; i++) {
           try {
             await this.clientContract.methods.initWithBlock(borshBlock).send({
               from: this.ethMasterAccount,
-              gas: 4000000,
+              gas: 6000000,
               handleRevert: true,
               gasPrice: new BN(await this.web3.eth.getGasPrice()).mul(
                 new BN(ethGasMultiplier)

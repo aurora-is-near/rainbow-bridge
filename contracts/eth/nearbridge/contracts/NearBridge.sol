@@ -11,7 +11,7 @@ contract NearBridge is INearBridge, AdminControlled {
     using NearDecoder for Borsh.Data;
 
     // Assumed to be even and to not exceed 256.
-    uint constant MAX_BLOCK_PRODUCERS = 100;
+    uint constant MAX_BLOCK_PRODUCERS = 140;
 
     struct Epoch {
         bytes32 epochId;
