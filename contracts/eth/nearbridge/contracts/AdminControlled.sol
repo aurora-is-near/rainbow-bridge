@@ -7,6 +7,7 @@ contract AdminControlled {
     uint public paused;
 
     constructor(address _admin, uint flags) {
+        verifyAdminAddress(_admin);
         admin = _admin;
         paused = flags;
     }

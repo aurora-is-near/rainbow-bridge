@@ -64,7 +64,7 @@ describe('NearBridge with admin access', () => {
     });
 
     describe('AdminControlled', async () => {
-        it('Admin account matches', async() => {
+        it('Admin account matches', async () => {
             expect(
                 await nearBridge.admin()
             )
@@ -73,7 +73,7 @@ describe('NearBridge with admin access', () => {
                 .equal(adminAccount.address);
         });
 
-        it('regular user can not perform admin functions', async() => {
+        it('regular user can not perform admin functions', async () => {
             const recipientBalanceBefore = ethers.BigNumber.from(await ethers.provider.getBalance(userAccount2.address));
             const contractBalanceBefore = ethers.BigNumber.from(await ethers.provider.getBalance(nearBridge.address));
 
@@ -261,6 +261,15 @@ describe('NearBridge with admin access', () => {
                 .revertedWith('Nominated admin shouldn\'t be zero address');
         });
 
+        it('should not accept zero address as an admin in constructor', async () => {
+            await (await ethers.getContractFactory('AdminControlled')).deploy(
+                ethers.constants.AddressZero, // admin address
+                0, // paused flags
+            ).then(() => { throw 'should not allow zero address for admin in constructor' })
+                .catch(() => {/* we are good */ })
+
+        });
+
         it('should reject the nominated admin', async () => {
             const newAdminAddress = '0x0123456789abcdefcafedeadbeefbea77a1de456';
             await nearBridge.nominateAdmin(newAdminAddress);
@@ -285,8 +294,8 @@ describe('NearBridge with admin access', () => {
 
             // Should now allow the current admin to accept the new admin
             await expect(nearBridge
-                            .connect(adminAccount)
-                            .acceptAdmin())
+                .connect(adminAccount)
+                .acceptAdmin())
                 .to
                 .be
                 .revertedWith('Caller must be the nominated admin');
@@ -296,8 +305,8 @@ describe('NearBridge with admin access', () => {
             const initialAdminAddress = await nearBridge.admin();
             // Manually set the nominated admin to the same one
             await nearBridge
-                    .connect(adminAccount)
-                    .adminSstore(1, initialAdminAddress);
+                .connect(adminAccount)
+                .adminSstore(1, initialAdminAddress);
 
             // Verify that the nominated admin is indeed the same one (manually set)
             expect(await nearBridge.nominatedAdmin())
@@ -314,8 +323,8 @@ describe('NearBridge with admin access', () => {
         it('should not accept the zero address admin', async () => {
             // Manually set the nominated admin to the same one
             await nearBridge
-                    .connect(adminAccount)
-                    .adminSstore(1, ethers.constants.AddressZero);
+                .connect(adminAccount)
+                .adminSstore(1, ethers.constants.AddressZero);
 
             // Verify that the nominated admin is indeed the zero address (manually set)
             expect(await nearBridge.nominatedAdmin())
