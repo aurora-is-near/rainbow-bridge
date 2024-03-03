@@ -27,7 +27,8 @@
         "readline-sync": "^1.4.10",
         "solc": "0.8.3",
         "solidity-coverage": "^0.7.16",
-        "solium": "^1.2.5"
+        "solium": "^1.2.5",
+        "bs58": "^4.0.1"
     },
     "scripts": {
         "build": "hardhat compile",

@@ -3,6 +3,8 @@ const { ethers } = require('hardhat');
 const { borshifyOutcomeProof } = require(`rainbow-bridge-utils`);
 const fs = require('fs').promises;
 const { computeMerkleRoot } = require('../utils/utils');
+const bs58 = require('bs58');
+const { getAllJsonFilesRecursive } = require('../../../../utils/proof-vector-utils');
 
 let NearProver, NearBridgeMock;
 
@@ -13,6 +15,49 @@ beforeEach(async function () {
         ethers.constants.AddressZero,
         0
     );
+});
+
+async function runTestVectors(testVectors) {
+    for (const test of testVectors) {
+        const {
+            description,
+            params: { proof, block_merkle_root },
+            expected: { is_valid, error },
+        } = test;
+        let wasValid;
+        let executionError;
+        try {
+            const blockMerkleRoot = bs58.decode(block_merkle_root).toString('hex');
+            // Note, the height shouldn't matter here, defaulting to 100
+            const height = 100;
+            expect(blockMerkleRoot === computeMerkleRoot(proof).toString('hex')).to.be.true;
+            await NearBridgeMock.setBlockMerkleRoot(height, "0x" + blockMerkleRoot);
+            wasValid = await NearProver.proveOutcome(borshifyOutcomeProof(proof), height);
+        } catch (error) {
+            wasValid = false;
+            executionError = error;
+        }
+        if (wasValid !== is_valid) {
+            const prefix = `Test Case "${description}": FAILED - expected`;
+            throw new Error(
+                `${prefix} ${is_valid
+                    ? `valid, got error ${executionError}`
+                    : `invalid result${error ? ` with error "${error}"` : ""}`
+                }`
+            );
+        }
+    }
+}
+
+describe('execution outcome proof vectors', async function () {
+    const files = getAllJsonFilesRecursive("../../../near-light-client-tests/test-vectors/executions");
+
+    for (const file of files) {
+        const fileName = file.split('\\').pop().split('/').pop();
+        it(`execution vector file "${fileName}"`, async function () {
+            await runTestVectors(require("../" + file));
+        });
+    }
 });
 
 async function testProof(merkleRoot, height, proofPath) {

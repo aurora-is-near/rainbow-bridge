@@ -1,0 +1,3 @@
+[submodule "near-light-client-tests"]
+	path = near-light-client-tests
+	url = https://github.com/austinabell/near-light-client-tests.git
