@@ -76,7 +76,7 @@ Note, you can use environment variables to pass sensitive data which will not le
 
 * [Guide](near2eth/watchdog/README.md) on how to quickly configure the watchdog for Mainnet
 
-Bridge is secure as long as majority (1/2) of Etherem mining power is honest and supermajority (2/3) of NEAR stake is honest.
+Bridge is secure as long as majority (1/2) of Ethereum mining power is honest and supermajority (2/3) of NEAR stake is honest.
 There are no additional security requirements, except that Ethereum should be able to accept 1 transaction within 4 hour period even in the worst congestion scenario.
 
 ## Gas costs
@@ -89,22 +89,22 @@ Ethereum fees are the following:
 - To submit a NEAR block header: approx 697,140 gas;
 - To challenge a NEAR block header: approx 700k gas.
 
-As of 2020-07-14 (gas price is 40 gwei) the cost of running bridge on NEAR mainnnet and Ethereum mainnet is approx 42 USD/day. The cost of ETH->NEAR transfer of ERC20 token is 1 USD. The cost of NEAR->ETH transfer of ERC20 token is 2 USD.
+As of 2020-07-14 (gas price is 40 gwei) the cost of running bridge on NEAR mainnet and Ethereum mainnet is approx 42 USD/day. The cost of ETH->NEAR transfer of ERC20 token is 1 USD. The cost of NEAR->ETH transfer of ERC20 token is 2 USD.
 
 ## Using Bridge on Testnet
 
 ### PoA vs PoW Ethereum networks
 
-Rainbow bridge can be deployed either on PoW or PoA networks. However, the main use case of the bridge is Ethereum Mainnet, which makes its design very PoW-centric and it is only trustless and decentralized for PoW networks. Unfortunately, the only popular PoW testnet is Ropsten, which frequently undergoes huge reorgs of more than [16k blocks](https://github.com/near/rainbow-bridge-cli/issues/329), because people test 51% attacks on it. 16k reorgs can wipe out entire contracts and revert days of computations. Overall, Ropsten has the following unfortunate specifics that does not exist with Ethereum Mainnet:
+Rainbow bridge can be deployed either on PoW or PoA networks. However, the main use case of the bridge is Ethereum Mainnet, which makes its design very PoW-centric and it is only trustless and decentralized for PoW networks. Unfortunately, the only popular PoW testnet is Ropsten, which frequently undergoes huge reorgs of more than [16k blocks](https://github.com/near/rainbow-bridge-cli/issues/329), because people test 51% attacks on it. 16k reorgs can wipe out entire contracts and revert days of computations. Overall, Ropsten has the following unfortunate specifics that do not exist with Ethereum Mainnet:
 
 - Extremely long re-orgs;
 - Gas price volatility -- Ropsten blocks might have orders of magnitude different median gas price;
 - Slow block production -- sometimes Ropsten blocks are produced once per several minutes;
 - [Infura is unreliable on Ropsten](https://github.com/near/rainbow-bridge-cli/issues/330)
 
-Therefore we advise users to not use Ropsten for bridge testing. Instead, we recommend using one of Ethereum's PoA testnet. Unfortunately, PoA networks have a differen header format and are also centralized by nature. Therefore when deploying bridge on PoA network please use `--near-client-trusted-signer` parameter. This will force `EthOnNearClient` to not validate Ethereum headers (since PoA headers are not valid PoW headers) and accept them only from the provided authority.
+Therefore we advise users to not use Ropsten for bridge testing. Instead, we recommend using one of Ethereum's PoA testnet. Unfortunately, PoA networks have a different header format and are also centralized by nature. Therefore when deploying bridge on PoA network please use `--near-client-trusted-signer` parameter. This will force `EthOnNearClient` to not validate Ethereum headers (since PoA headers are not valid PoW headers) and accept them only from the provided authority.
 
-The documenation below assumes Rinkeby testnet.
+The documentation below assumes Rinkeby testnet.
 
 ### Using existing bridge on Rinkeby
 

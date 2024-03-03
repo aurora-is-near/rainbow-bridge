@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Rainbow bridge is a composition of software applications allowing smart contracts in different blockchains to establish trustless communication between them. It accomplished by having a mutual "smart contract"-based light clients in both blockchains; and cryptographic proofs of the including events (execution results) of smart contracts in blockchain blocks.
+The Rainbow bridge is a composition of software applications allowing smart contracts in different blockchains to establish trustless communication between them. It is accomplished by having a mutual "smart contract"-based light clients in both blockchains; and cryptographic proofs of the including events (execution results) of smart contracts in blockchain blocks.
 
 ## Architecture
 
@@ -40,5 +40,5 @@ Software:
 Relations:
 1. Non-trusted and non-authorized Ethereum relayer software (aka *EthRelayer*) could forward Ethereum block headers into *EthBridge* smart contract hosted in Near blockchain.
 2. Non-trusted and non-authorized Near relayer software (aka *NearRelayer*) could forward Near block headers into *NearBridge* smart contract hosted in Ethereum network.
-3. *NearProver* verifies Near transaction result was included into Near bloc. And then checks if this block image exisits in *NearBridge*.
+3. *NearProver* verifies Near transaction result was included into Near bloc. And then checks if this block image exists in *NearBridge*.
 4. *EthProver* verifies Ethereum event/log was included into Ethereum transaction receipt which was included into Ethereum block. And then checks if this block image exists in *EthBridge*.
