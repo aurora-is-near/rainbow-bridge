@@ -57,6 +57,10 @@ impl EthClientContractTrait for FileEthClientContract {
             .send_light_client_update(light_client_update)
     }
 
+    fn is_ready_to_submit_light_client_update(&self) -> Result<bool, Box<dyn Error>> {
+        Ok(true)
+    }
+
     fn get_finalized_beacon_block_hash(&self) -> Result<H256, Box<dyn Error>> {
         self.eth_client_contract.get_finalized_beacon_block_hash()
     }

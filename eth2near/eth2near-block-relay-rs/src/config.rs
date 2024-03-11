@@ -22,6 +22,9 @@ pub struct Config {
     // endpoint for a full node on the NEAR chain
     pub near_endpoint: String,
 
+    // api key for the NEAR endpoint
+    pub near_endpoint_api_key: Option<String>,
+
     // Account id from which relay make requests
     pub signer_account_id: String,
 
@@ -77,6 +80,9 @@ pub struct Config {
     // Sleep time in seconds after blocks/light_client_update submission to client
     pub sleep_time_after_submission_secs: u64,
 
+    // Sleep time in seconds waiting for in-progress proposal to be processed
+    pub sleep_time_on_in_progress_proposal_secs: u64,
+
     /// Max number of stored blocks in the storage of the eth2 client contract.
     /// Events that happen past this threshold cannot be verified by the client.
     /// It is used on initialization of the Eth2 client.
@@ -119,7 +125,7 @@ impl Config {
     }
 
     fn check_account_id(&self) {
-        let near_rpc_client = NearRPCClient::new(&self.near_endpoint);
+        let near_rpc_client = NearRPCClient::new(&self.near_endpoint, &self.near_endpoint_api_key);
 
         // check `signer_account_id`
         let _signer_account_id: near_sdk::AccountId = self

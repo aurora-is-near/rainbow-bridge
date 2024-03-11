@@ -720,6 +720,7 @@ mod tests {
             SIGNER_PRIVATE_KEY,
             DAO_CONTRACT_ACCOUNT_ID,
             None,
+            None,
         );
 
         let mut dao_contract = DAOContract::new(Box::new(near_contract_wrapper));

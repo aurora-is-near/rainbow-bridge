@@ -36,6 +36,31 @@ impl EthClientContractTrait for DaoEthClientContract {
         &mut self,
         light_client_update: LightClientUpdate,
     ) -> Result<FinalExecutionOutcomeView, Box<dyn Error>> {
+        // Submmit new proposal
+        let (proposal_id, execution_outcome) =
+            self.dao_contract.submit_light_client_update_proposal(
+                near_sdk::AccountId::from_str(&self.eth_client_contract.get_account_id())?,
+                light_client_update,
+            )?;
+
+        let max_num_of_iterations = 10;
+        let mut count = 0;
+        while count < max_num_of_iterations {
+            let proposal_status = self.dao_contract.get_proposal(proposal_id);
+            if let Ok(staus) = proposal_status {
+                if staus.proposal.status != dao_types::ProposalStatus::InProgress {
+                    break;
+                }
+            }
+
+            thread::sleep(Duration::from_secs(10));
+            count += 1;
+        }
+
+        Ok(execution_outcome)
+    }
+
+    fn is_ready_to_submit_light_client_update(&self) -> Result<bool, Box<dyn Error>> {
         // Check for already submitted updates
         let last_proposal_id = self.dao_contract.get_last_proposal_id()?;
         if last_proposal_id > 0 {
@@ -48,33 +73,11 @@ impl EthClientContractTrait for DaoEthClientContract {
                         .get_signer_account_id()
                         .to_string()
             {
-                return Err(format!(
-                    "A proposal {} has already been submitted by this relayer which is in progress",
-                    last_proposal_id
-                )
-                .into());
+                return Ok(false);
             }
         }
 
-        // Submmit new proposal
-        let (proposal_id, execution_outcome) =
-            self.dao_contract.submit_light_client_update_proposal(
-                near_sdk::AccountId::from_str(&self.eth_client_contract.get_account_id())?,
-                light_client_update,
-            )?;
-
-        loop {
-            let proposal_status = self.dao_contract.get_proposal(proposal_id);
-            if let Ok(staus) = proposal_status {
-                if staus.proposal.status != dao_types::ProposalStatus::InProgress {
-                    break;
-                }
-            }
-
-            thread::sleep(Duration::from_secs(10));
-        }
-
-        Ok(execution_outcome)
+        return Ok(true);
     }
 
     fn get_finalized_beacon_block_hash(&self) -> Result<H256, Box<dyn Error>> {
@@ -165,6 +168,7 @@ mod tests {
             &signer_account_id,
             &signer_private_key,
             CONTRACT_ACCOUNT_ID,
+            None,
             None,
         ));
 

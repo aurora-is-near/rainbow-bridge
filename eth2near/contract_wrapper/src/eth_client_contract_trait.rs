@@ -12,6 +12,9 @@ pub trait EthClientContractTrait {
         light_client_update: LightClientUpdate,
     ) -> Result<FinalExecutionOutcomeView, Box<dyn Error>>;
 
+    /// Check if the client is ready to accept new update
+    fn is_ready_to_submit_light_client_update(&self) -> Result<bool, Box<dyn Error>>;
+
     /// Gets finalized beacon block hash from Ethereum Light Client on NEAR
     fn get_finalized_beacon_block_hash(&self) -> Result<H256, Box<dyn Error>>;
 

@@ -114,6 +114,10 @@ impl EthClientContractTrait for EthClientContract {
         )
     }
 
+    fn is_ready_to_submit_light_client_update(&self) -> Result<bool, Box<dyn Error>> {
+        Ok(true)
+    }
+
     fn get_finalized_beacon_block_hash(&self) -> Result<H256, Box<dyn Error>> {
         let result = self.contract_wrapper.call_view_function(
             "finalized_beacon_block_root".to_string(),

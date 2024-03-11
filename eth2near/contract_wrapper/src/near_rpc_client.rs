@@ -5,13 +5,15 @@ use std::error::Error;
 pub struct NearRPCClient {
     endpoint_url: String,
     client: Client,
+    api_key: String,
 }
 
 impl NearRPCClient {
-    pub fn new(endpoint_url: &str) -> Self {
+    pub fn new(endpoint_url: &str, api_key: &Option<String>) -> Self {
         Self {
             endpoint_url: endpoint_url.to_string(),
             client: reqwest::blocking::Client::new(),
+            api_key: api_key.clone().unwrap_or_default(),
         }
     }
 
@@ -30,6 +32,7 @@ impl NearRPCClient {
         let res = self
             .client
             .post(&self.endpoint_url)
+            .header("x-api-key", self.api_key.clone())
             .json(&json_value)
             .send()?
             .text()?;
@@ -50,6 +53,7 @@ impl NearRPCClient {
         let res = self
             .client
             .post(&self.endpoint_url)
+            .header("x-api-key", self.api_key.clone())
             .json(&json_value)
             .send()?
             .text()?;

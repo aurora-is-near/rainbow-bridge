@@ -33,6 +33,7 @@ fn get_eth_contract_wrapper(config: &Config) -> Box<dyn ContractWrapper> {
         Some(std::time::Duration::from_secs(
             config.near_requests_timeout_seconds,
         )),
+        config.near_endpoint_api_key.clone(),
     ))
 }
 
@@ -48,6 +49,7 @@ fn get_dao_contract_wrapper(config: &Config) -> Box<dyn ContractWrapper> {
         Some(std::time::Duration::from_secs(
             config.near_requests_timeout_seconds,
         )),
+        config.near_endpoint_api_key.clone(),
     ))
 }
 
